@@ -162,7 +162,7 @@
     (loop [gold 0]
       (if (= (first ((@screen new-y) new-x)))
         (do (swap! player update-in [:gold] inc)
-            (swap! update-in screen [new-y new-x] rest)
+            (swap! screen update-in [new-y new-x] rest)
             (recur (inc gold)))
         (do
           (swap! messages conj (str "Found " gold " gold."))
@@ -216,7 +216,7 @@
   (println "Objects:\n@ - You\nZ - Zombies!\n$ - Gold")
   (println "\n# - Trees\n^ - Teleporters\n")
   (println "> - Level Exit\n\nControls:\ny k u\nh @ l")
-  (println "\nb j n\n\n. - Wait\nq - Quit\n\n")
+  (println "b j n\n\n. - Wait\nq - Quit\n\n")
   (println "Press any key to continue.\n")
   (read-char)
   (print-screen))
