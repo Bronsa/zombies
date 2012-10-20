@@ -22,7 +22,8 @@
 
 (defn die [msg]
   (printf "\n\n%s Score: %s\n\n" msg 
-	  (+ (* (:gold @player) @level) (* 10 (dec @level))))
+          (+ (* (:gold @player) @level) (* 10 (dec @level))))
+  (flush)
   (System/exit 1))
 
 (defn rand-x [] (rand-int max-x))
@@ -208,13 +209,13 @@
 (defn print-help []
   (dotimes [i (+ 3 max-x)]
     (println))
-  (println "Welcome to Zombies!\n\n")
-  (println "The world has been overrun by zombies.  ")
-  (println "You have no weapons or other means of\n")
-  (println "self-defense.  All you can do is run for ")
-  (println "the exit!  That, and collect gold.\n\n")
+  (println "Welcome to Zombies!\n")
+  (print "The world has been overrun by zombies.  ")
+  (println "You have no weapons or other means of")
+  (print "self-defense.  All you can do is run for ")
+  (println "the exit!  That, and collect gold.\n")
   (println "Objects:\n@ - You\nZ - Zombies!\n$ - Gold")
-  (println "\n# - Trees\n^ - Teleporters\n")
+  (println "\n# - Trees\n^ - Teleporters")
   (println "> - Level Exit\n\nControls:\ny k u\nh @ l")
   (println "b j n\n\n. - Wait\nq - Quit\n\n")
   (println "Press any key to continue.\n")
