@@ -193,7 +193,7 @@
       (die "Goodbye.")
       (if (= input \?)
         (print-help)
-        (when-let [[y x] (action-map input)]
+        (when-let [[x y] (action-map input)]
           (let [new-x (+ x (:x @player))
                 new-y (+ y (:y @player))]
             (when-not (or (neg? new-x) (>= new-x max-x)
