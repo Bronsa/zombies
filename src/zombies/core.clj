@@ -174,7 +174,7 @@
     
     \^
     (do
-      (update-in screen [new-y new-x] rest)
+      (swap! screen update-in [new-y new-x] rest)
       (loop [new-x (rand-int max-x)
              new-y (rand-int max-y)]
         (if (= (first ((@screen new-y) new-x)) \.)
