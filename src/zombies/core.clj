@@ -192,7 +192,19 @@
 
 (declare print-help)
 
+(defn check-if-stuck []
+  (if (every? #(contains? #{\Z \# nil} %)
+              (map (fn [[x y]]
+                     (let [y (+ (:y @player) y)
+                           x (+ (:x @player) x)]
+                       (when-not (or (neg? x) (>= x max-x)
+                                     (neg? y) (>= y max-y))
+                         ((@screen y) x))))
+                   [[0 0] [0 1] [0 -1] [1 0] [1 -1] [-1 0] [-1 1] [-1 -1]]))
+    (die "You're stuck!")))
+
 (defn process-player []
+  (check-if-stuck)
   (let [input (read-char)
         action-map '{\h [-1 0] \j [0 1] \k [0 -1] \l [1 0] \y [-1 -1]
                      \u [1 -1] \b [-1 1] \n [1 1] \. [0 0]}]
