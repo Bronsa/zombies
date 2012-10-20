@@ -160,7 +160,7 @@
         true)
     \$
     (loop [gold 0]
-      (if (= (first ((@screen new-y) new-x) \$))
+      (if (= (first ((@screen new-y) new-x)) \$)
         (do (swap! player update-in [:gold] inc)
             (swap! screen update-in [new-y new-x] rest)
             (recur (inc gold)))
