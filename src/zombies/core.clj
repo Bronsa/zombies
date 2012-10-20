@@ -23,12 +23,11 @@
 	  (+ (* (:gold @player) @level) (* 10 (dec @level))))
   (System/exit 1))
 
-(defn rand-x [] (rand max-x))
-(defn rand-y [] (rand max-y))
+(defn rand-x [] (rand-int max-x))
+(defn rand-y [] (rand-int max-y))
 
 (defn randly-update-screen-with [c]
-  (swap! screen update-in [(rand-x)
-                           (rand-y)] conj c))
+  (swap! screen update-in [(rand-x) (rand-y)] conj c))
 
 (defn new-level []
   (dotimes [i (* 2 max-x)]
@@ -37,11 +36,11 @@
   (dotimes [i max-x]
     (dotimes [j max-y]
       (swap! screen assoc-in [j i] [\.])))
-  (dotimes [_ (rand 100)]
+  (dotimes [_ (rand-int 100)]
     (randly-update-screen-with \$))
-  (dotimes [_ (rand 10)]
+  (dotimes [_ (rand-int 10)]
     (randly-update-screen-with \^))
-  (dotimes [_ (rand 80)]
+  (dotimes [_ (rand-int 80)]
     (randly-update-screen-with \#))
   (reset! zombies [])
   (dotimes [_ (+ 8 (* 2 @level))]
@@ -67,8 +66,8 @@
   (print  "Level:" @level "HP:" (:hp @player) "Gold:" (:gold @player))
   (dotimes [i max-x]
     (println)
-    (dotimes  [j max-y]
-      (println  (first (-> @screen j i)))))
+    (dotimes [j max-y]
+      (print (first ((@screen j) i)))))
   (println)
   (doseq [i @messages]
     (print i " " )))
@@ -89,7 +88,7 @@
 
 (defn process-zombies []
   (dotimes [z (count @zombies)]
-    (if (or (zero? (rand 7))
+    (if (or (zero? (rand-int 7))
             (not (process-zombie-smart z)))
       (process-zombie-rand z))))
 
@@ -102,7 +101,7 @@
                    (if (< z-x p-x) dec identity)) z-x)
         new-y ((if (> z-y p-y) inc
                    (if (< z-y p-y) dec identity)) z-y)]
-    (case (first (-> @screen new-x new-y))
+    (case (first ((@screen new-x) new-y))
 
       \@
       (do (swap! player update-in [:hp] dec)
@@ -112,12 +111,12 @@
       nil
       
       \^
-      (loop [new-x (rand max-x)
-             new-y (rand max-y)]
-        (if (= (first (-> @screen new-x new-y)) \.)
+      (loop [new-x (rand-int max-x)
+             new-y (rand-int max-y)]
+        (if (= (first ((@screen new-x) new-y)) \.)
           (move-zombie z new-x new-y)
-          (recur (rand max-x)
-                 (rand max-y))))
+          (recur (rand-int max-x)
+                 (rand-int max-y))))
       ;; else
       (move-zombie z new-x new-y))))
 
@@ -125,38 +124,38 @@
   (let
       [z-x (:x (@zombies z))
        z-y (:y (@zombies z))
-       rand-x (rand 3)
-       rand-y (rand 3)
+       rand-x (rand-int 3)
+       rand-y (rand-int 3)
        new-x ((if (zero? rand-x) inc
                   (if (= 1 rand-x) dec identity)) z-x)
        new-y ((if (zero? rand-y) inc
                   (if (= 1 rand-y) dec identity)) z-y)]
     (when-not (or (neg? new-x) (>= new-x max-x)
                   (neg? new-y) (>= new-y max-y))
-      (case (first (-> @screen new-x new-y))
+      (case (first ((@screen new-x) new-y))
         
         (\Z \#)
         nil
         
         \^
-        (loop [new-x (rand max-x)
-               new-y (rand max-y)]
-          (if (= (first (-> @screen new-x new-y)) \.)
+        (loop [new-x (rand-int max-x)
+               new-y (rand-int max-y)]
+          (if (= (first ((@screen new-x) new-y)) \.)
             (move-zombie z new-x new-y)
-            (recur (rand max-x)
-                   (rand max-y))))
+            (recur (rand-int max-x)
+                   (rand-int max-y))))
         ;; else
         (move-zombie z new-x new-y)))))
 
 
 (defn match [new-x new-y]
-  (case (first (-> @screen new-x new-y))
+  (case (first ((@screen new-x) new-y))
     \>
     (do (new-level)
         true)
     \$
     (loop [gold 0]
-      (if (= (first (-> @screen new-x new-y)))
+      (if (= (first ((@screen new-x) new-y)))
         (do (swap! player update-in [:gold] inc)
             (update-in screen [new-x new-y] rest)
             (recur (inc gold)))
@@ -170,14 +169,16 @@
     \^
     (do
       (update-in screen [new-x new-y] rest)
-      (loop [new-x (rand max-x)
-             new-y (rand max-y)]
-        (if (= (first (-> @screen new-x new-y)) \.)
+      (loop [new-x (rand-int max-x)
+             new-y (rand-int max-y)]
+        (if (= (first ((@screen new-x) new-y)) \.)
           (move-player new-x new-y)
-          (recur (rand max-x)
-                 (rand max-y)))))
+          (recur (rand-int max-x)
+                 (rand-int max-y)))))
     ;; else
     (move-player new-x new-y)))
+
+(declare print-help)
 
 (defn process-player []
   (let [input (read-char)
@@ -193,6 +194,11 @@
             (when-not (or (neg? new-x) (>= new-x max-x)
                           (neg? new-y) (>= new-y max-y))
               (match new-x new-y))))))))
+
+(defn recover-hp []
+  (if (and (zero? (rand-int 10))
+           (< (:hp player) 20))
+    (swap! player update-in [:hp] inc)))
 
 (defn print-help []
   (dotimes [i (+ 3 max-x)]
