@@ -77,7 +77,6 @@
   (flush))
 
 (defn move-zombie [z x y]
-  
   (let [zombie (@zombies z)]
     (swap! screen update-in [(:y zombie) (:x zombie)] rest)
     (swap! zombies update-in [z] assoc :x x :y y)
@@ -120,11 +119,13 @@
       (loop [new-x (rand-int max-x)
              new-y (rand-int max-y)]
         (if (= (first ((@screen new-y) new-x)) \.)
-          (move-zombie z new-x new-y)
+          (do (move-zombie z new-x new-y)
+              true)
           (recur (rand-int max-x)
                  (rand-int max-y))))
       ;; else
-      (move-zombie z new-x new-y))))
+      (do (move-zombie z new-x new-y)
+          true))))
 
 (defn process-zombie-rand [z]
   (let
