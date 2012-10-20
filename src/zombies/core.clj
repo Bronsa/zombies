@@ -143,6 +143,11 @@
         
         (\Z \#)
         nil
+
+        \@
+        (do (swap! player update-in [:hp] dec)
+            (swap! messages conj "Ouch!")
+            true)
         
         \^
         (loop [new-x (rand-int max-x)
