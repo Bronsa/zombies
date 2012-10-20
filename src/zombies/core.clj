@@ -162,7 +162,7 @@
     (loop [gold 0]
       (if (= (first ((@screen new-y) new-x)))
         (do (swap! player update-in [:gold] inc)
-            (update-in screen [new-y new-x] rest)
+            (swap! update-in screen [new-y new-x] rest)
             (recur (inc gold)))
         (do
           (swap! messages conj (str "Found " gold " gold."))
