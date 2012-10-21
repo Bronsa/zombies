@@ -7,10 +7,8 @@
 
 (def screen (atom (vec (repeat max-y (vec (repeat max-x '(0)))))))
 
-(defrecord Player [x y hp gold])
-(def player (atom (map->Player {:hp 20 :gold 0})))
+(def player (atom {:x nil :y nil :hp 20 :gold 0}))
 
-(defrecord Zombie [x y])
 (def zombies (atom []))
 
 (def level (atom 0))
@@ -48,7 +46,7 @@
   (dotimes [_ (+ 8 (* 2 @level))]
     (let [x (rand-x)
           y (rand-y)]
-      (swap! zombies conj (->Zombie x y))
+      (swap! zombies conj {:x x :y y})
       (swap! screen update-in [y x] conj \Z)))
   (randly-update-screen-with \>)
   (let [x (rand-x)
