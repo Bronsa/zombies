@@ -172,8 +172,8 @@
                            x (+ (:x @player) x)]
                        (when-not (or (neg? x) (>= x max-x)
                                      (neg? y) (>= y max-y))
-                         ((@screen y) x))))
-                   [[0 0] [0 1] [0 -1] [1 0] [1 -1] [-1 0] [-1 1] [-1 -1]]))
+                         (first ((@screen y) x)))))
+                   [[1 1] [0 1] [0 -1] [1 0] [1 -1] [-1 0] [-1 1] [-1 -1]]))
     (die "You're stuck!")))
 
 (defn process-player []
