@@ -6,9 +6,7 @@
 (def max-y 22)
 
 (def screen (atom (vec (repeat max-y (vec (repeat max-x '(0)))))))
-
 (def player (atom {:x nil :y nil :hp 20 :gold 0}))
-
 (def zombies (atom []))
 
 (def level (atom 0))
@@ -115,32 +113,25 @@
     (when-not (or (neg? new-x) (>= new-x max-x)
                   (neg? new-y) (>= new-y max-y))
       (case (first ((@screen new-y) new-x))
-
         (\Z \#) nil
-
         \@
         (do (swap! player update-in [:hp] dec)
             (swap! messages conj "Ouch!")
             true)
-
         \^
         (loop [new-x (rand-int max-x)
                new-y (rand-int max-y)]
           (if (= (first ((@screen new-y) new-x)) \.)
             (do (move-zombie z new-x new-y) true)
             (recur (rand-int max-x) (rand-int max-y))))
-
         ;; default
         (do (move-zombie z new-x new-y) true)))))
 
 (defn match [new-x new-y]
   (case (first ((@screen new-y) new-x))
-
     (\Z \#) nil
-    
     \>
     (do (new-level) true)
-
     \$
     (loop [gold 0]
       (if (= (first ((@screen new-y) new-x)) \$)
@@ -150,7 +141,6 @@
         (do
           (swap! messages conj (str "Found " gold " gold."))
           (match new-x new-y))))
-    
     \^
     (do
       (swap! screen update-in [new-y new-x] rest)
@@ -159,7 +149,6 @@
         (if (= (first ((@screen new-y) new-x)) \.)
           (move-player new-x new-y)
           (recur (rand-int max-x) (rand-int max-y)))))
-
     ;; default
     (move-player new-x new-y)))
 
